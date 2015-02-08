@@ -36,7 +36,9 @@ module.exports =
         .call(done)
     , 30000
 
-    runs -> chromedriver.kill()
+    runs ->
+      chromedriver.kill()
+      console.log "Chromedriver logs:\n#{logs.join("\n")}"
 
   # Start Atom using chromedriver.
   startAtom: (args, env={}) ->
