@@ -38,4 +38,6 @@ for arg in "$@"; do
   esac
 done
 
+echo "Launching Atom" >&2
+echo env ${atom_env[@]} ${atom_path} ${atom_args[@]} ${atom_switches[@]} >&2
 exec env ${atom_env[@]} ${atom_path} ${atom_args[@]} ${atom_switches[@]}
