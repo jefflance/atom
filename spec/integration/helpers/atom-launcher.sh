@@ -1,18 +1,22 @@
 #!/bin/bash
 
 # This script wraps the `Atom` binary, allowing the `chromedriver` server to
-# execute it with positional arguments. `chromedriver` only allows 'switches'
-# to be specified when starting a browser, not positional arguments, so this
-# script accepts two special switches:
+# execute it with positional arguments and environment variables. `chromedriver`
+# only allows 'switches' to be specified when starting a browser, not positional
+# arguments, so this script accepts the following special switches:
 #
-# * `atom-path` The path to the `Atom` binary
-# * `atom-args` A space-separated list of positional arguments to pass to Atom.
+# * `atom-path`: The path to the `Atom` binary.
+# * `atom-arg`:  A positional argument to pass to Atom. This flag can be specified
+#                multiple times.
+# * `atom-env`:  A key=value environment variable to set for Atom. This flag can
+#                be specified multiple times.
 #
 # Any other switches will be passed through to `Atom`.
 
 atom_path=""
 atom_switches=()
 atom_args=()
+atom_env=()
 
 for arg in "$@"; do
   case $arg in
@@ -20,11 +24,12 @@ for arg in "$@"; do
       atom_path="${arg#*=}"
       ;;
 
-    --atom-args=*)
-      atom_args_string="${arg#*=}"
-      for atom_arg in $atom_args_string; do
-        atom_args+=($atom_arg)
-      done
+    --atom-arg=*)
+      atom_args+=(${arg#*=})
+      ;;
+
+    --atom-env=*)
+      atom_env+=(${arg#*=})
       ;;
 
     *)
@@ -33,4 +38,4 @@ for arg in "$@"; do
   esac
 done
 
-exec $atom_path "${atom_switches[@]}" "${atom_args[@]}"
+exec env ${atom_env[@]} ${atom_path} ${atom_args[@]} ${atom_switches[@]}
